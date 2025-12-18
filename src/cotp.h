@@ -3,7 +3,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #define SHA1 0
 #define SHA256 1
 #define SHA512 2
@@ -118,22 +117,38 @@ char *get_steam_totp(const char *base32_encoded_secret, int period,
                      cotp_error_t *err_code);
 
 /**
- * get_totp_at
+ * base32_encode_buf
  *
- * Ownership: returns a newly allocated, zero-padded OTP string; caller must
- * free(). On error: returns NULL and sets err_code.
+ * Heap-free version: writes to out_buf. Returns true on success.
  */
-char *get_totp_at(const char *base32_encoded_secret, long time, int digits,
-                  int period, int sha_algo, cotp_error_t *err_code);
+bool base32_encode_buf(const uchar *user_data, size_t data_len, char *out_buf,
+                       size_t out_len, cotp_error_t *err_code);
 
 /**
- * get_steam_totp_at
+ * base32_decode_buf
  *
- * Ownership: returns a newly allocated Steam-style OTP string; caller must
- * free(). On error: returns NULL and sets err_code.
+ * Heap-free version: writes to out_data. Returns true on success.
  */
-char *get_steam_totp_at(const char *base32_encoded_secret, long timestamp,
-                        int period, cotp_error_t *err_code);
+bool base32_decode_buf(const char *user_data, size_t data_len, uchar *out_data,
+                       size_t out_len, cotp_error_t *err_code);
+
+/**
+ * get_hotp_buf
+ *
+ * Heap-free version: writes OTP to out_buf.
+ */
+bool get_hotp_buf(const char *b32_secret, long counter, int digits,
+                  int sha_algo, char *out_buf, size_t out_len,
+                  cotp_error_t *err_code);
+
+/**
+ * get_totp_at_buf
+ *
+ * Heap-free version: writes OTP to out_buf.
+ */
+bool get_totp_at_buf(const char *b32_secret, long time, int digits, int period,
+                     int sha_algo, char *out_buf, size_t out_len,
+                     cotp_error_t *err_code);
 
 /**
  * otp_to_int
